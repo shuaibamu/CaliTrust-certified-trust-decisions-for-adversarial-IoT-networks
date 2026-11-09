@@ -1,0 +1,18 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx,xcolor}
+\usepackage{tikz,pgfplots}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds}
+\usepgfplotslibrary{groupplots}
+\newcommand{\figsmall}{\fontsize{7}{8.5}\selectfont}
+\newcommand{\figbase}{\fontsize{7.5}{9}\selectfont}
+\pgfplotsset{compat=1.18, every axis/.append style={font=\figbase, grid=major, grid style={gray!18}, tick label style={font=\figsmall}}}
+\definecolor{cCali}{HTML}{1B7837}\definecolor{cMarg}{HTML}{C51B7D}\definecolor{cDaps}{HTML}{E08214}
+\definecolor{cEmp}{HTML}{542788}\definecolor{cGCN}{HTML}{2166AC}\definecolor{cMLP}{HTML}{7FBC41}
+\definecolor{cSL}{HTML}{B35806}\definecolor{cBRS}{HTML}{878787}\definecolor{cET}{HTML}{D6604D}
+\newcommand{\B}{\mathsf{B}}\newcommand{\M}{\mathsf{M}}\newcommand{\C}{\mathcal{C}}
+\newcommand{\qM}{0.715}\newcommand{\thrBonsM}{0.372}\newcommand{\splitsymax}{0.554}
+\begin{document}
+\input{figs.tex}
+\end{document}

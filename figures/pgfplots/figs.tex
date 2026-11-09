@@ -1,0 +1,248 @@
+% ======================= R1 validity
+\newcommand{\FigValidity}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.72\linewidth,height=6.0cm, xlabel={Target malicious-class coverage $1-\alpha$}, ylabel={Empirical coverage $\Pr[\mathsf{M}\in\mathcal{C}\mid Y{=}\mathsf{M}]$},
+  xmin=0.785,xmax=0.995, ymin=0.35,ymax=1.02, legend pos=south east, legend cell align=left, legend style={font=\figsmall}]
+\addplot[gray,dashed,domain=0.785:0.995]{x}; \addlegendentry{ideal ($y=x$)}
+\addplot[cMarg,mark=square*,error bars/.cd,y dir=both,y explicit] table[x=target,y=marg,y error=margsd]{data/validity.dat}; \addlegendentry{Split CP (marginal)}
+\addplot[cDaps,mark=diamond*,error bars/.cd,y dir=both,y explicit] table[x=target,y=daps,y error=dapssd]{data/validity.dat}; \addlegendentry{DAPS (diffused, marginal)}
+\addplot[cEmp,mark=triangle*,error bars/.cd,y dir=both,y explicit] table[x=target,y=emp,y error=empsd]{data/validity.dat}; \addlegendentry{Empirical threshold}
+\addplot[cCali,very thick,mark=*,error bars/.cd,y dir=both,y explicit] table[x=target,y=cali,y error=calisd]{data/validity.dat}; \addlegendentry{CaliTrust}
+\end{axis}\end{tikzpicture}
+\caption{Malicious-class coverage versus target coverage (10 networks, MIX attack).}
+\label{fig:validity}
+\end{figure}}
+
+% ======================= R2 efficiency
+\newcommand{\FigEfficiency}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.72\linewidth,height=5.8cm, xlabel={Malicious miscoverage level $\alpha_{\mathsf{M}}$ ($\alpha_{\mathsf{B}}=0.10$)}, ylabel={Verification rate $\Pr[|\mathcal{C}|\neq 1]$},
+  xmin=0.01,xmax=0.21, ymin=0, ymax=0.6, legend pos=north east, legend cell align=left, legend style={font=\figsmall}, xtick={0.02,0.05,0.10,0.15,0.20}, xticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2}]
+\addplot[cBRS,mark=o] table[x=alpha,y=brs]{data/efficiency.dat}; \addlegendentry{BRS + conformal layer}
+\addplot[cSL,mark=x] table[x=alpha,y=sl]{data/efficiency.dat}; \addlegendentry{SL + conformal layer}
+\addplot[cMLP,mark=triangle] table[x=alpha,y=mlp]{data/efficiency.dat}; \addlegendentry{MLP + conformal layer}
+\addplot[cGCN,mark=square] table[x=alpha,y=gcn]{data/efficiency.dat}; \addlegendentry{GCN + conformal layer}
+\addplot[cCali,very thick,mark=*] table[x=alpha,y=ragnn]{data/efficiency.dat}; \addlegendentry{CaliTrust (RA-GNN)}
+\end{axis}\end{tikzpicture}
+\caption{Verification rate versus the malicious risk budget for different encoders.}
+\label{fig:efficiency}
+\end{figure}}
+
+% ======================= R3 attacks
+\newcommand{\FigAttacks}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=1.6cm}, width=0.5\linewidth, height=5.2cm,
+  symbolic x coords={BS,BM,BST,OO,SB,MIX}, xtick=data, ybar, /pgf/bar width=5pt, enlarge x limits=0.12, legend style={font=\figsmall, at={(1.12,-0.18)}, anchor=north, legend columns=2}]
+\nextgroupplot[ylabel={Malicious-class coverage}, ymin=0.6, ymax=1.02, title={\small (a) coverage (target 0.95)}]
+\addplot[fill=cMarg!70,draw=cMarg,error bars/.cd,y dir=both,y explicit] table[x=atk,y=margcov,y error=margcovsd]{data/attacks.dat};
+\addplot[fill=cCali!80,draw=cCali,error bars/.cd,y dir=both,y explicit] table[x=atk,y=calicov,y error=calicovsd]{data/attacks.dat};
+\draw[black,dashed] (axis cs:BS,0.95) -- (axis cs:MIX,0.95);
+\legend{Split CP (marginal), CaliTrust}
+\nextgroupplot[ylabel={Verification rate}, ymin=0, ymax=0.25, title={\small (b) attestation load}]
+\addplot[fill=cMarg!70,draw=cMarg,error bars/.cd,y dir=both,y explicit] table[x=atk,y=margver,y error=margversd]{data/attacks.dat};
+\addplot[fill=cCali!80,draw=cCali,error bars/.cd,y dir=both,y explicit] table[x=atk,y=caliver,y error=caliversd]{data/attacks.dat};
+\end{groupplot}\end{tikzpicture}
+\caption{Malicious-class coverage and verification rate per attack family.}
+\label{fig:attacks}
+\end{figure}}
+
+% ======================= R4 temporal
+\newcommand{\FigTemporal}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=1.5cm}, width=0.5\linewidth, height=5.4cm, xmin=16,xmax=45, xlabel={Interaction window $t$},
+  legend style={font=\figsmall, at={(1.1,-0.3)}, anchor=north, legend columns=4}]
+\nextgroupplot[ylabel={Malicious miss rate}, ymin=0, ymax=0.5, title={\small (a) certified-trust violations}]
+\addplot[cMarg,thick] table[x=w,y=stmiss]{data/temporal.dat};
+\addplot[cGCN,thick,densely dashed] table[x=w,y=romiss]{data/temporal.dat};
+\addplot[cCali,very thick] table[x=w,y=acimiss]{data/temporal.dat};
+\addplot[black,dashed,domain=16:45]{0.05};
+\draw[red!70!black,thick,dotted] (axis cs:22,0) -- (axis cs:22,0.5) node[pos=0.93,right,font=\figsmall]{attack switch};
+\legend{Static CP, Rolling CP, CaliTrust (ACI), target $\alpha_{\mathsf{M}}$}
+\nextgroupplot[ylabel={Verification rate}, ymin=0, ymax=0.7, title={\small (b) attestation load}]
+\addplot[cMarg,thick] table[x=w,y=stver]{data/temporal.dat};
+\addplot[cGCN,thick,densely dashed] table[x=w,y=rover]{data/temporal.dat};
+\addplot[cCali,very thick] table[x=w,y=aciver]{data/temporal.dat};
+\draw[red!70!black,thick,dotted] (axis cs:22,0) -- (axis cs:22,0.7);
+\end{groupplot}\end{tikzpicture}
+\caption{Miss rate and verification rate over time under a sleeper-attacker switch at $t=22$.}
+\label{fig:temporal}
+\end{figure}}
+
+% ======================= R5 gamma
+\newcommand{\FigGamma}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.7\linewidth,height=5.4cm, symbolic x coords={0,0.01,0.02,0.05,0.1,0.2}, xtick=data, xlabel={ACI step size $\gamma$},
+  ylabel={Post-switch rate}, ymin=0, ymax=0.5, legend pos=north east, legend cell align=left, legend style={font=\figsmall}]
+\addplot[cMarg,thick,mark=square*,error bars/.cd,y dir=both,y explicit] table[x=gamma,y=miss,y error=misssd]{data/gamma.dat}; \addlegendentry{malicious miss rate}
+\addplot[cCali,thick,mark=*,error bars/.cd,y dir=both,y explicit] table[x=gamma,y=ver,y error=versd]{data/gamma.dat}; \addlegendentry{verification rate}
+\addplot[black,dashed] coordinates {(0,0.05) (0.2,0.05)}; \addlegendentry{target $\alpha_{\mathsf{M}}$}
+\end{axis}\end{tikzpicture}
+\caption{Post-switch miss and verification rates versus the ACI step size.}
+\label{fig:gamma}
+\end{figure}}
+
+% ======================= R6 ROC
+\newcommand{\FigROC}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.62\linewidth,height=6.0cm, xlabel={False-positive rate (benign flagged)}, ylabel={True-positive rate (malicious flagged)},
+  xmin=0,xmax=1,ymin=0,ymax=1.01, legend cell align=left, legend style={font=\figsmall, at={(0.5,-0.2)}, anchor=north, legend columns=4}]
+\addplot[gray,dashed,domain=0:1]{x}; \addlegendentry{chance}
+\addplot[cET,thick] table[x=fpr,y=EigenTrust]{data/roc.dat}; \addlegendentry{EigenTrust}
+\addplot[cBRS,thick] table[x=fpr,y=BRS]{data/roc.dat}; \addlegendentry{BRS}
+\addplot[cSL,thick] table[x=fpr,y=SL]{data/roc.dat}; \addlegendentry{Subjective logic}
+\addplot[cMLP,thick] table[x=fpr,y=MLP]{data/roc.dat}; \addlegendentry{MLP}
+\addplot[cGCN,thick] table[x=fpr,y=GCN]{data/roc.dat}; \addlegendentry{GCN (Guardian-style)}
+\addplot[cCali,very thick] table[x=fpr,y=RAGNN]{data/roc.dat}; \addlegendentry{RA-GNN}
+\end{axis}\end{tikzpicture}
+\caption{ROC curves of the point trust scores (MIX attack, network seed 0).}
+\label{fig:roc}
+\end{figure}}
+
+% ======================= R7 score histogram
+\newcommand{\FigHist}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.72\linewidth,height=5.6cm, ybar interval, xlabel={Malicious non-conformity score $s(\mathbf{x},\mathsf{M})=1-\hat p_{\mathsf{M}}(\mathbf{x})$}, ylabel={Fraction of test nodes},
+  xmin=0,xmax=1, ymin=0, ymax=0.62, xtick={0,0.2,0.4,0.6,0.8,1}, legend pos=north east, legend cell align=left, legend style={font=\figsmall}, xticklabel style={/pgf/number format/fixed}]
+\fill[yellow!25] (axis cs:\thrBonsM,0) rectangle (axis cs:\qM,0.62);
+\addplot[fill=cCali!50,draw=cCali] table[x=left,y=benign]{data/hist_scores.dat}; \addlegendentry{benign}
+\addplot[fill=cMarg!60,draw=cMarg] table[x=left,y=malicious]{data/hist_scores.dat}; \addlegendentry{malicious}
+\draw[thick,black] (axis cs:\qM,0) -- (axis cs:\qM,0.62) node[pos=0.55,left,font=\figsmall,align=right]{$\hat q_{\mathsf{M}}$};
+\draw[thick,black,dashed] (axis cs:\thrBonsM,0) -- (axis cs:\thrBonsM,0.62) node[pos=0.55,right,font=\figsmall]{$1-\hat q_{\mathsf{B}}$};
+\node[font=\figsmall,align=center] at (axis cs:0.16,0.40) {$\{\mathsf{M}\}$\\isolate};
+\node[font=\figsmall,align=center] at (axis cs:0.545,0.40) {$\{\mathsf{B},\mathsf{M}\}$\\attest};
+\node[font=\figsmall,align=center] at (axis cs:0.86,0.30) {$\{\mathsf{B}\}$\\trust};
+\end{axis}\end{tikzpicture}
+\caption{Distribution of malicious non-conformity scores and the resulting decision regions.}
+\label{fig:hist}
+\end{figure}}
+
+% ======================= R8 rho
+\newcommand{\FigRho}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=1.6cm}, width=0.5\linewidth, height=5.2cm, xlabel={Malicious fraction $\rho$}, xtick={0.1,0.2,0.3,0.4,0.45},
+  xticklabel style={/pgf/number format/fixed}, legend style={font=\figsmall}]
+\nextgroupplot[ylabel={Malicious-class coverage}, ymin=0.6, ymax=1.02, legend style={font=\figsmall, at={(1.1,-0.28)}, anchor=north, legend columns=3}, title={\small (a) guarantee}]
+\addplot[cMarg,thick,mark=square*,error bars/.cd,y dir=both,y explicit] table[x=rho,y=margcov,y error=margcovsd]{data/rho.dat}; \addlegendentry{Split CP (marginal)}
+\addplot[cCali,very thick,mark=*,error bars/.cd,y dir=both,y explicit] table[x=rho,y=calicov,y error=calicovsd]{data/rho.dat}; \addlegendentry{CaliTrust}
+\addplot[black,dashed,domain=0.1:0.45]{0.95}; \addlegendentry{target}
+\nextgroupplot[ylabel={Verification rate}, ymin=0, ymax=0.4, title={\small (b) attestation load}]
+\addplot[cCali,very thick,mark=*,error bars/.cd,y dir=both,y explicit] table[x=rho,y=caliver,y error=caliversd]{data/rho.dat};
+\end{groupplot}\end{tikzpicture}
+\caption{Coverage and verification rate versus the malicious fraction.}
+\label{fig:rho}
+\end{figure}}
+
+% ======================= R9 budget
+\newcommand{\FigBudget}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=1.6cm}, width=0.5\linewidth, height=5.2cm, xlabel={Malicious calibration anchors $n_{\mathsf{M}}$}, legend style={font=\figsmall}]
+\nextgroupplot[ylabel={Verification rate}, ymin=0, ymax=0.8, legend style={font=\figsmall, at={(1.1,-0.28)}, anchor=north, legend columns=2}, title={\small (a) efficiency}]
+\addplot[cMarg,thick,mark=square*,error bars/.cd,y dir=both,y explicit] table[x=nM,y=vdet,y error=vdetsd]{data/budget.dat}; \addlegendentry{deterministic quantile}
+\addplot[cCali,very thick,mark=*,error bars/.cd,y dir=both,y explicit] table[x=nM,y=ver,y error=versd]{data/budget.dat}; \addlegendentry{smoothed (CaliTrust)}
+\nextgroupplot[ylabel={Malicious-class coverage}, ymin=0.8, ymax=1.02, title={\small (b) validity}]
+\addplot[cCali,very thick,mark=*,error bars/.cd,y dir=both,y explicit] table[x=nM,y=cov,y error=covsd]{data/budget.dat};
+\addplot[black,dashed,domain=0:80]{0.95};
+\end{groupplot}\end{tikzpicture}
+\caption{Effect of the number of malicious calibration anchors on efficiency and validity.}
+\label{fig:budget}
+\end{figure}}
+
+% ======================= R10 splits
+\newcommand{\FigSplits}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.72\linewidth,height=5.6cm, xlabel={Realised malicious-class coverage $c$ on test nodes}, ylabel={Fraction of re-splits with coverage $\le c$},
+  xmin=0.85,xmax=1.0, ymin=0, ymax=1.02, legend pos=north west, legend cell align=left, legend style={font=\figsmall}, xticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2}]
+\addplot[cEmp,thick,const plot] table[x=x,y=emp]{data/splits_ecdf.dat}; \addlegendentry{Empirical threshold}
+\addplot[cCali,very thick,const plot] table[x=x,y=cali]{data/splits_ecdf.dat}; \addlegendentry{CaliTrust (smoothed)}
+\addplot[cGCN,very thick,const plot,densely dashed] table[x=x,y=pac]{data/splits_ecdf.dat}; \addlegendentry{CaliTrust-PAC ($\delta=0.1$)}
+\draw[black,dashed] (axis cs:0.95,0) -- (axis cs:0.95,1.02) node[pos=0.97,left,font=\figsmall]{target 0.95};
+\draw[black,dotted] (axis cs:0.85,0.1) -- (axis cs:1.0,0.1) node[pos=0.03,above right,font=\figsmall]{$\delta=0.1$};
+\end{axis}\end{tikzpicture}
+\caption{Empirical CDF of realised malicious-class coverage over 500 calibration re-splits.}
+\label{fig:splits}
+\end{figure}}
+
+% ======================= R11 scalability
+\newcommand{\FigScal}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{loglogaxis}[width=0.72\linewidth,height=5.8cm, xlabel={Number of IoT devices $N$}, ylabel={Wall-clock time (ms, one CPU core)},
+  legend cell align=left, legend style={font=\figsmall, at={(0.5,-0.22)}, anchor=north, legend columns=2}, xtick={500,1000,2000,5000,10000}, xticklabels={500,1k,2k,5k,10k}]
+\addplot[cGCN,thick,mark=square] table[x=N,y=epoch_ms]{data/scal.dat}; \addlegendentry{RA-GNN training epoch}
+\addplot[cCali,very thick,mark=*] table[x=N,y=inf_ms]{data/scal.dat}; \addlegendentry{RA-GNN inference (all nodes)}
+\addplot[cDaps,thick,mark=diamond*] table[x=N,y=conf_ms]{data/scal.dat}; \addlegendentry{conformal calibration + sets}
+\addplot[cET,thick,mark=triangle] table[x=N,y=et_ms]{data/scal.dat}; \addlegendentry{EigenTrust}
+\addplot[cSL,thick,mark=x] table[x=N,y=sl_ms]{data/scal.dat}; \addlegendentry{Subjective logic}
+\end{loglogaxis}\end{tikzpicture}
+\caption{Wall-clock time versus network size on one CPU core.}
+\label{fig:scal}
+\end{figure}}
+
+% ======================= R12 ablation
+\newcommand{\FigAblation}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=0.7cm, yticklabels at=edge left}, width=0.44\linewidth, height=7.2cm, xbar, /pgf/bar width=6pt,
+  symbolic y coords={plus_gated_diff,plus_uniform_diff,no_smoothing,no_mondrian,no_temporal,no_rater,no_signed,no_relatt,full}, ytick=data,
+  yticklabels={+ gated diffusion,+ uniform diffusion,$-$ smoothing,$-$ class-conditional,$-$ temporal features,$-$ rater features,$-$ signed INT relations,$-$ relation attention,CaliTrust (full)},
+  enlarge y limits=0.07, y tick label style={font=\figsmall}]
+\nextgroupplot[xlabel={Malicious-class coverage}, xmin=0.7, xmax=1.0, title={\small (a) guarantee}]
+\addplot[fill=cCali!70,draw=cCali,error bars/.cd,x dir=both,x explicit] table[y=v,x=cov,x error=covsd]{data/ablation.dat};
+\draw[black,dashed] (axis cs:0.95,plus_gated_diff) -- (axis cs:0.95,full);
+\nextgroupplot[xlabel={Verification rate}, xmin=0, xmax=0.3, title={\small (b) attestation load}]
+\addplot[fill=cMarg!60,draw=cMarg,error bars/.cd,x dir=both,x explicit] table[y=v,x=ver,x error=versd]{data/ablation.dat};
+\end{groupplot}\end{tikzpicture}
+\caption{Ablation study: malicious-class coverage and verification rate (10 networks).}
+\label{fig:ablation}
+\end{figure}}
+
+% ======================= R13 utility
+\newcommand{\FigUtility}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.72\linewidth,height=5.8cm, xlabel={Malicious fraction $\rho$}, ylabel={Service success rate of honest consumers}, xtick={0.1,0.2,0.3,0.4,0.45},
+  legend cell align=left, legend style={font=\figsmall, at={(0.5,-0.22)}, anchor=north, legend columns=3}, xticklabel style={/pgf/number format/fixed}]
+\addplot[black,thick,mark=o,densely dotted] table[x=rho,y=none]{data/utility.dat}; \addlegendentry{no trust management}
+\addplot[cBRS,thick,mark=o] table[x=rho,y=brs]{data/utility.dat}; \addlegendentry{BRS}
+\addplot[cSL,thick,mark=x] table[x=rho,y=sl]{data/utility.dat}; \addlegendentry{Subjective logic}
+\addplot[cGCN,thick,mark=square] table[x=rho,y=gcn]{data/utility.dat}; \addlegendentry{GCN (Guardian-style)}
+\addplot[cMLP,thick,mark=triangle] table[x=rho,y=ragnn]{data/utility.dat}; \addlegendentry{RA-GNN, thresholded}
+\addplot[cCali,very thick,mark=*] table[x=rho,y=cali]{data/utility.dat}; \addlegendentry{CaliTrust (+ attestation)}
+\end{axis}\end{tikzpicture}
+\caption{Service success rate of honest consumers versus the malicious fraction.}
+\label{fig:utility}
+\end{figure}}
+
+% ======================= R14 evidence injection
+\newcommand{\FigSybil}{%
+\begin{figure}[t]\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=1.5cm}, width=0.5\linewidth, height=5.4cm, xlabel={Sybil accounts per attacker $k$},
+  ymin=0, ymax=0.8, xtick={0,1,3,5,10,20}, xmode=normal, legend style={font=\figsmall, at={(1.1,-0.3)}, anchor=north, legend columns=2}]
+\nextgroupplot[ylabel={Malicious miss rate}, title={\small (a) Bitcoin-OTC}]
+\addplot[cMarg,very thick,mark=square*] table[x=k,y=m0fresh]{data/robust_otc.dat};
+\addplot[cMarg,thick,mark=square,densely dashed] table[x=k,y=m0adm]{data/robust_otc.dat};
+\addplot[cCali,very thick,mark=*] table[x=k,y=m3fresh]{data/robust_otc.dat};
+\addplot[cCali,thick,mark=o,densely dashed] table[x=k,y=m3adm]{data/robust_otc.dat};
+\addplot[black,dashed,domain=0:20]{0.05};
+\legend{no admission / fresh sybils, no admission / established sybils, admission $m{=}3$ / fresh sybils, admission $m{=}3$ / established sybils, target $\alpha_{\mathsf{M}}$}
+\nextgroupplot[ylabel={Malicious miss rate}, title={\small (b) Bitcoin-Alpha}]
+\addplot[cMarg,very thick,mark=square*] table[x=k,y=m0fresh]{data/robust_alpha.dat};
+\addplot[cMarg,thick,mark=square,densely dashed] table[x=k,y=m0adm]{data/robust_alpha.dat};
+\addplot[cCali,very thick,mark=*] table[x=k,y=m3fresh]{data/robust_alpha.dat};
+\addplot[cCali,thick,mark=o,densely dashed] table[x=k,y=m3adm]{data/robust_alpha.dat};
+\addplot[black,dashed,domain=0:20]{0.05};
+\end{groupplot}\end{tikzpicture}
+\caption{Malicious miss rate under post-calibration sybil injection, with and without admission control.}
+\label{fig:sybil}
+\end{figure}}
