@@ -53,8 +53,6 @@ the third decimal place under other JAX/XLA versions.
 | `calitrust/rev_robust.py` | post-calibration evidence injection: refit vs frozen standardisation, insiders, established sybils, *m* ∈ {3, 5, 10}, ACI after injection |
 | `scripts/` | data download, table generation, figure scripts, one-shot run scripts |
 | `results/` | JSON outputs of the revision runs reported in the paper, and the generated tables (`tables_rev.json`) |
-| `figures/png/` | the 16 figures of the revised manuscript (`fig01.png` … `fig16.png`) |
-| `figures/tikz/` | TikZ sources of Fig. 1 (SIoT structure) and Fig. 2 (architecture) |
 | `figures/pgfplots/` | PGFPlots source of Figs. 4–15 (`figs.tex`) and the data files it reads |
 
 ## Reproducing the paper
@@ -81,18 +79,7 @@ data are read from `data/` (override with `CALITRUST_DATA`).
 `python scripts/make_tables.py` on the shipped `results/*.json` reproduces `results/tables_rev.json` exactly.
 On one CPU core, one `rev_robust` network (3 attack draws × all injection configurations) takes about 8 minutes.
 
-### Protocol notes
 
-* **Attackers on the real networks.** 10% of all users (588 on Bitcoin-OTC, 378 on Bitcoin-Alpha) are drawn from
-  users with at least 3 ratings and assigned one of the five attack families. The ratings they issue and
-  receive are modified according to that family. Honest users keep their real ratings, and both networks keep
-  their SNAP timestamps. Genuine fraudsters in the raw data are labelled honest; this label noise affects every
-  method equally.
-* **Standardisation protocols.** `refit` recomputes the feature statistics after an injection, as in the original
-  submission. `frozen` keeps the statistics from calibration time, which is the default for CaliTrust in the
-  revised paper. Both are reported.
-* **Seeds.** Simulation results use 10 networks (seeds 0–9). Leave-one-family-out runs use 5 seeds. Real-network
-  baselines use 5 attack draws and injection experiments use 3.
 
 ## Citation
 
