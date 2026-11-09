@@ -17,8 +17,6 @@ malicious device is bounded by a user-chosen budget α_M. The pipeline consists 
 * **Mondrian (class-conditional) smoothed conformal prediction**, with an optional PAC mode (δ = 0.1);
 * **audit-driven per-class adaptive conformal inference (ACI)**, which recalibrates online from uniform audits.
 
-Everything is implemented from scratch with NumPy/SciPy and JAX (automatic differentiation only); scikit-learn is
-used for metrics. The code runs on one CPU core.
 
 ## Installation
 
